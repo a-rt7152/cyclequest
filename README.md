@@ -71,6 +71,9 @@ There's no real hardware GPS on these cycles (it's a student project), so `track
 | Unused Flask/MySQL script, disconnected from the site | Replaced with a working Flask + SQLite backend actually wired to every page |
 
 
-## Contributors 
+## Contributors
 
-This started as a group college project. Credit where it's due: - [priya-1234-cell](https://github.com/priya-1234-cell) - [a-rt7152](https://github.com/a-rt7152) Save the file when you're done.
+This started as a group college project. Credit where it's due:
+
+- [priya-1234-cell](https://github.com/priya-1234-cell)
+- [a-rt7152](https://github.com/a-rt7152)
