@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}My Stats — Cycle Quest{% endblock %}
+{% block content %}
+<div class="bookings-wrap">
+  <h1>Your riding stats</h1>
+  <div class="strip" style="border-radius:14px;box-shadow:var(--shadow);margin-bottom:24px;">
+    <div class="stat"><b>{{ total_rides }}</b><span>completed rides</span></div>
+    <div class="stat"><b>{{ total_hours }}</b><span>hours booked</span></div>
+    <div class="stat"><b>{{ total_distance }} km</b><span>distance covered</span></div>
+    <div class="stat"><b>Rs. {{ total_spent }}</b><span>total spent</span></div>
+  </div>
+
+  {% if favorite_category %}
+  <p>Your most-booked category so far is <strong>{{ favorite_category | capitalize }}</strong>.</p>
+  {% else %}
+  <p>Complete a ride (book, pay, then "End ride") to start building your stats here.</p>
+  {% endif %}
+
+  {% if active_now %}
+  <p>You have {{ active_now }} ride{{ 's' if active_now > 1 else '' }} active right now.
+    <a href="{{ url_for('bookings') }}">View bookings &rarr;</a></p>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,344 @@
+/* ==========================================================================
+   Cycle Quest — design tokens
+   Palette: deep forest teal (brand), moss green (primary action),
+   burnt clay (ratings/price accents), warm sand paper background.
+   Type: Poppins for headings (sporty, rounded), Inter for body/UI text.
+   ========================================================================== */
+:root {
+  --ink: #17221D;
+  --ink-soft: #3E4A43;
+  --bg: #EFF2E9;
+  --paper: #FBFBF7;
+  --forest: #1B3A32;
+  --forest-dark: #122822;
+  --moss: #6E8F3E;
+  --moss-dark: #56712F;
+  --clay: #C9622B;
+  --sand: #DED4B4;
+  --border: #D8D9CC;
+  --danger: #B3402A;
+  --radius-sm: 6px;
+  --radius-md: 14px;
+  --shadow: 0 6px 18px rgba(23, 34, 29, 0.10);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Inter', 'Poppins', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Poppins', system-ui, sans-serif;
+  color: var(--forest);
+  margin: 0 0 0.5em 0;
+  line-height: 1.2;
+}
+
+a { color: var(--forest); text-decoration: none; }
+p { max-width: 68ch; }
+
+img { max-width: 100%; display: block; }
+
+main { min-height: 70vh; }
+
+/* ---------- Top nav ---------- */
+.topnav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 32px;
+  background: var(--forest);
+  color: #fff;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.topnav .brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+.topnav .brand img { height: 38px; width: 38px; object-fit: contain; }
+.nav-links {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin: 0;
+  padding: 0;
+  flex-wrap: wrap;
+}
+.nav-links a { color: #EAF1E7; font-weight: 500; }
+.nav-links a:hover { color: #fff; text-decoration: underline; }
+.nav-user { color: #C7D6C0; font-size: 0.92rem; }
+.nav-btn {
+  background: var(--moss);
+  color: #fff !important;
+  padding: 8px 18px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+.nav-btn:hover { background: var(--moss-dark); text-decoration: none !important; }
+
+/* ---------- Flash messages ---------- */
+.flash-area { max-width: 900px; margin: 16px auto 0; padding: 0 20px; }
+.flash {
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+.flash-error { background: #F7DED6; color: var(--danger); border: 1px solid #E3B4A4; }
+.flash-success { background: #E4EED2; color: var(--moss-dark); border: 1px solid #C4D9A4; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-block;
+  background: var(--moss);
+  color: #fff;
+  border: none;
+  padding: 12px 22px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-family: inherit;
+}
+.btn:hover { background: var(--moss-dark); }
+.btn.secondary { background: transparent; border: 2px solid var(--forest); color: var(--forest); }
+.btn.secondary:hover { background: var(--forest); color: #fff; }
+.btn.danger { background: transparent; color: var(--danger); border: 2px solid var(--danger); }
+.btn.danger:hover { background: var(--danger); color: #fff; }
+.btn:disabled { background: #B9BCB1; cursor: not-allowed; }
+.btn-block { width: 100%; }
+
+/* ---------- Hero / landing page ---------- */
+.hero {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  padding: 64px 48px;
+  max-width: 1180px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+.hero-copy { flex: 1 1 380px; }
+.hero-copy h1 {
+  font-size: 2.6rem;
+  max-width: 14ch;
+}
+.hero-copy p { font-size: 1.1rem; color: var(--ink-soft); }
+.hero-actions { display: flex; gap: 14px; margin-top: 22px; flex-wrap: wrap; }
+.hero-visual { flex: 1 1 320px; position: relative; }
+.hero-visual img { border-radius: var(--radius-md); box-shadow: var(--shadow); }
+.route-line { position: absolute; top: -18px; left: -18px; width: 90px; opacity: 0.9; }
+
+.strip {
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+  padding: 28px;
+  background: var(--paper);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  text-align: center;
+}
+.strip .stat b { display: block; font-family: 'Poppins', sans-serif; font-size: 1.6rem; color: var(--forest); }
+.strip .stat span { color: var(--ink-soft); font-size: 0.9rem; }
+
+/* ---------- Category cards (home dashboard) ---------- */
+.section-heading { text-align: center; padding: 40px 20px 10px; }
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 26px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px 32px 60px;
+}
+.category-card {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--paper);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+}
+.category-card .cat-image { height: 190px; overflow: hidden; }
+.category-card .cat-image img { width: 100%; height: 100%; object-fit: cover; }
+.category-card .cat-body { padding: 20px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.category-card.leisure .cat-image { border-bottom: 4px solid var(--moss); }
+.category-card.adventure .cat-image { border-bottom: 4px solid var(--clay); }
+.category-card.kids .cat-image { border-bottom: 4px solid #4C7A9C; }
+.cat-available { font-size: 0.9rem; color: var(--ink-soft); }
+
+/* ---------- Cycle grid (category page) ---------- */
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 32px 32px 10px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.sort-bar select {
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  font-family: inherit;
+}
+.cycle-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px 32px 60px;
+}
+.cycle-card {
+  background: var(--paper);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.cycle-card .cycle-image { aspect-ratio: 1 / 1; overflow: hidden; background: #fff; }
+.cycle-card .cycle-image img { width: 100%; height: 100%; object-fit: cover; }
+.cycle-card .cycle-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.cycle-card h3 { font-size: 1.05rem; margin-bottom: 2px; }
+.cycle-price { color: var(--clay); font-weight: 700; }
+.cycle-rating { color: var(--ink-soft); font-size: 0.9rem; }
+.cycle-desc { font-size: 0.9rem; color: var(--ink-soft); flex: 1; }
+.cycle-availability { font-size: 0.85rem; font-weight: 600; }
+.cycle-availability.low { color: var(--danger); }
+.cycle-availability.ok { color: var(--moss-dark); }
+.book-form { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+.book-form select { padding: 8px; border-radius: var(--radius-sm); border: 1px solid var(--border); }
+
+/* ---------- Forms (login / register / payment) ---------- */
+.form-page {
+  max-width: 440px;
+  margin: 48px auto;
+  background: var(--paper);
+  padding: 36px 34px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+}
+.form-page.wide { max-width: 680px; }
+.form-page h1 { text-align: center; }
+.field { margin-bottom: 16px; }
+.field label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.92rem; }
+.field input, .field select {
+  width: 100%;
+  padding: 11px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  font-family: inherit;
+  font-size: 1rem;
+}
+.field input:focus, .field select:focus, button:focus, a:focus {
+  outline: 3px solid #A9C388;
+  outline-offset: 1px;
+}
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.gender-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+.gender-row label { font-weight: 400; display: flex; align-items: center; gap: 6px; }
+.form-footnote { text-align: center; margin-top: 16px; font-size: 0.92rem; color: var(--ink-soft); }
+.helper-text { font-size: 0.85rem; color: var(--ink-soft); margin-top: -8px; margin-bottom: 14px; }
+
+/* ---------- Bookings list ---------- */
+.bookings-wrap { max-width: 900px; margin: 32px auto 60px; padding: 0 20px; }
+.booking-row {
+  display: flex;
+  gap: 18px;
+  background: var(--paper);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  padding: 18px;
+  margin-bottom: 18px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.booking-row img { width: 110px; height: 110px; object-fit: cover; border-radius: var(--radius-sm); }
+.booking-info { flex: 1; min-width: 200px; }
+.status-pill {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.status-active { background: #E4EED2; color: var(--moss-dark); }
+.status-pending_payment { background: #F5E6C8; color: #93690F; }
+.status-cancelled { background: #EEE; color: #777; }
+.status-completed { background: #DCE7F0; color: #2E5878; }
+.booking-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* ---------- Payment summary ---------- */
+.summary-box {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px 18px;
+  margin-bottom: 22px;
+}
+.summary-box .total { font-size: 1.2rem; font-weight: 700; color: var(--clay); }
+
+/* ---------- Live tracking map ---------- */
+.track-wrap { max-width: 900px; margin: 32px auto 60px; padding: 0 20px; }
+#map { height: 420px; border-radius: var(--radius-md); box-shadow: var(--shadow); }
+.track-meta {
+  display: flex;
+  gap: 24px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+  font-size: 0.92rem;
+  color: var(--ink-soft);
+}
+.live-dot {
+  display: inline-block;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--moss);
+  margin-right: 6px;
+  animation: pulse 1.6s infinite;
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(110,143,62,0.5); }
+  70% { box-shadow: 0 0 0 8px rgba(110,143,62,0); }
+  100% { box-shadow: 0 0 0 0 rgba(110,143,62,0); }
+}
+
+/* ---------- About page ---------- */
+.about-wrap { max-width: 720px; margin: 40px auto 60px; padding: 0 24px; }
+
+/* ---------- Footer ---------- */
+.site-footer {
+  text-align: center;
+  padding: 22px;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  border-top: 1px solid var(--border);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 640px) {
+  .hero { padding: 40px 22px; }
+  .hero-copy h1 { font-size: 2rem; }
+  .two-col { grid-template-columns: 1fr; }
+  .topnav { padding: 12px 18px; }
+}

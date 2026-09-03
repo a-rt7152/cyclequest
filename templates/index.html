@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Cycle Quest — Rent a cycle, ride the city{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-copy">
+    <h1>Grab a cycle. Track it live. Ride wherever you're headed.</h1>
+    <p>Cycle Quest is a campus-and-city cycle rental service — leisure cruisers for a
+      slow evening, trail-ready bikes for the rough stuff, and small ones for the kids.
+      Every ride you book shows up on a live map from the moment you unlock it.</p>
+    <div class="hero-actions">
+      {% if current_user %}
+        <a href="{{ url_for('home') }}" class="btn">Browse rides</a>
+      {% else %}
+        <a href="{{ url_for('register') }}" class="btn">Create an account</a>
+        <a href="{{ url_for('login') }}" class="btn secondary">Log in</a>
+      {% endif %}
+    </div>
+  </div>
+  <div class="hero-visual">
+    <img src="{{ url_for('static', filename='images/adventure/adv7.jpg') }}" alt="A trail cycle from the Cycle Quest fleet">
+  </div>
+</section>
+
+<div class="strip">
+  <div class="stat"><b>19</b><span>cycles in the fleet</span></div>
+  <div class="stat"><b>3</b><span>ride categories</span></div>
+  <div class="stat"><b>Live</b><span>GPS on every active ride</span></div>
+</div>
+
+<div class="section-heading">
+  <h2>Find the ride that fits your day</h2>
+  <p style="margin:0 auto;text-align:center;color:var(--ink-soft);">Three categories, each with cycles suited to a different kind of ride.</p>
+</div>
+<div class="category-grid">
+  <div class="category-card leisure">
+    <div class="cat-image"><img src="{{ url_for('static', filename='images/leisure/leisure2.jpg') }}" alt="Leisure cycle"></div>
+    <div class="cat-body">
+      <h3>Leisure Rides</h3>
+      <p style="margin:0;color:var(--ink-soft);font-size:0.92rem;">Comfortable cruisers for parks, campus loops, and easy evenings.</p>
+    </div>
+  </div>
+  <div class="category-card adventure">
+    <div class="cat-image"><img src="{{ url_for('static', filename='images/adventure/adv4.jpg') }}" alt="Adventure cycle"></div>
+    <div class="cat-body">
+      <h3>Adventure Rides</h3>
+      <p style="margin:0;color:var(--ink-soft);font-size:0.92rem;">Trail-ready bikes built for hills, grip, and rough terrain.</p>
+    </div>
+  </div>
+  <div class="category-card kids">
+    <div class="cat-image"><img src="{{ url_for('static', filename='images/kids/kids1.jpg') }}" alt="Kids cycle"></div>
+    <div class="cat-body">
+      <h3>Kids Rides</h3>
+      <p style="margin:0;color:var(--ink-soft);font-size:0.92rem;">Smaller frames, training wheels, built for first-time riders.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

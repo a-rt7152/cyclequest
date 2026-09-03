@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Payment — Cycle Quest{% endblock %}
+{% block content %}
+<div class="form-page wide">
+  <h1>Confirm and pay</h1>
+
+  <div class="summary-box">
+    <p style="margin:0 0 6px 0;"><strong>{{ booking.cycle.name }}</strong> &middot; {{ booking.cycle.category | capitalize }}</p>
+    <p style="margin:0 0 6px 0;">{{ booking.hours }} hour{{ 's' if booking.hours > 1 else '' }} &times; Rs. {{ booking.cycle.price_per_hour }}/hr</p>
+    <p class="total" style="margin:8px 0 0 0;">Total: Rs. {{ booking.total_price }}</p>
+  </div>
+
+  <p class="helper-text" style="margin-top:-6px;">
+    This is a simulated payment form for a college project — no real card details are
+    processed or stored. Submitting this form marks your booking as active in the database.
+  </p>
+
+  <form method="POST">
+    <div class="two-col">
+      <div class="field">
+        <label for="cardName">Name on card</label>
+        <input type="text" id="cardName" name="cardName" required>
+      </div>
+      <div class="field">
+        <label for="cardNumber">Card number</label>
+        <input type="text" id="cardNumber" name="cardNumber" placeholder="4242 4242 4242 4242" required>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="field">
+        <label for="expiry">Expiry (MM/YY)</label>
+        <input type="text" id="expiry" name="expiry" placeholder="12/28" required>
+      </div>
+      <div class="field">
+        <label for="cvv">CVV</label>
+        <input type="text" id="cvv" name="cvv" placeholder="123" required>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-block">Pay Rs. {{ booking.total_price }}</button>
+  </form>
+</div>
+{% endblock %}

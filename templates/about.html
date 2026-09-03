@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}About — Cycle Quest{% endblock %}
+{% block content %}
+<div class="about-wrap">
+  <h1>About Cycle Quest</h1>
+  <p>Cycle Quest is a cycle rental service built around three kinds of rides:
+    leisure cruisers for a relaxed loop around the park, adventure bikes for rough
+    trails and hills, and smaller kids' cycles for first-time riders.</p>
+  <p>Every booking is tracked from the moment you confirm payment — the fleet map
+    shows a simulated live GPS position for each cycle currently out on a ride,
+    the same way real bike-share services track their fleets.</p>
+  <p>This project started as a set of static front-end pages with no real backend.
+    It's since been rebuilt with a proper Flask + SQLite backend: real accounts
+    with hashed passwords, a real bookings database, and live position data served
+    over a JSON API.</p>
+</div>
+{% endblock %}

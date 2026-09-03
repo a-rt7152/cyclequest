@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block title %}Tracking {{ cycle.name }} — Cycle Quest{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+{% endblock %}
+{% block content %}
+<div class="track-wrap">
+  <h1>{{ cycle.name }}</h1>
+  <p><span class="live-dot"></span>Live position &middot; moving along its route in real time</p>
+  <div id="map"></div>
+  <div class="track-meta">
+    <span id="speed">Speed: &hellip;</span>
+    {% if booking %}
+    <span id="distance">Distance this ride: &hellip;</span>
+    <span id="elapsed">Time on ride: &hellip;</span>
+    {% endif %}
+    <span id="lastUpdate"></span>
+  </div>
+  {% if booking %}
+  <form method="POST" action="{{ url_for('end_ride', booking_id=booking.id) }}"
+        style="margin-top:16px;" onsubmit="return confirm('End this ride now?');">
+    <button type="submit" class="btn danger">End ride</button>
+  </form>
+  {% endif %}
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  const cycleId = {{ cycle.id }};
+  const bookingId = {{ booking.id if booking else 'null' }};
+
+  const map = L.map('map');
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors',
+    maxZoom: 18,
+  }).addTo(map);
+
+  const bikeIcon = (heading) => L.divIcon({
+    className: 'bike-marker',
+    html: `<div style="transform: rotate(${heading}deg); font-size: 22px; line-height:1;">🚲</div>`,
+    iconSize: [26, 26],
+    iconAnchor: [13, 13],
+  });
+
+  let marker = null;
+  let trail = null;
+  const trailPoints = [];
+
+  // client-side interpolation state, so the marker glides smoothly
+  // between server updates instead of jumping every 3 seconds
+  let from = null, to = null, animStart = 0;
+  const POLL_MS = 3000;
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  function animate() {
+    if (from && to) {
+      const t = Math.min((performance.now() - animStart) / POLL_MS, 1);
+      const lat = lerp(from.lat, to.lat, t);
+      const lng = lerp(from.lng, to.lng, t);
+      if (marker) {
+        marker.setLatLng([lat, lng]);
+        marker.setIcon(bikeIcon(to.heading));
+      }
+    }
+    requestAnimationFrame(animate);
+  }
+  requestAnimationFrame(animate);
+
+  async function loadRoute() {
+    const res = await fetch(`/api/route/${cycleId}`);
+    if (!res.ok) return;
+    const route = await res.json();
+    if (route.length) {
+      L.polyline(route.concat([route[0]]), {
+        color: '#1B3A32', weight: 2, opacity: 0.35, dashArray: '4 6'
+      }).addTo(map);
+    }
+  }
+
+  async function pollLocation() {
+    try {
+      const res = await fetch(`/api/location/${cycleId}`);
+      if (!res.ok) return;
+      const loc = await res.json();
+
+      if (!marker) {
+        map.setView([loc.lat, loc.lng], 16);
+        marker = L.marker([loc.lat, loc.lng], { icon: bikeIcon(loc.heading) }).addTo(map);
+        trail = L.polyline([], { color: '#C9622B', weight: 3, opacity: 0.7 }).addTo(map);
+        from = to = loc;
+      } else {
+        from = to ? { lat: marker.getLatLng().lat, lng: marker.getLatLng().lng } : loc;
+        to = loc;
+        animStart = performance.now();
+      }
+
+      trailPoints.push([loc.lat, loc.lng]);
+      if (trailPoints.length > 60) trailPoints.shift();
+      trail.setLatLngs(trailPoints);
+
+      document.getElementById('speed').textContent = `Speed: ${loc.speed_kmh} km/h`;
+      document.getElementById('lastUpdate').textContent =
+        `Updated ${new Date().toLocaleTimeString()}`;
+    } catch (err) {
+      console.error('tracking poll failed', err);
+    }
+  }
+
+  async function pollBookingStats() {
+    if (!bookingId) return;
+    try {
+      const res = await fetch(`/api/booking-distance/${bookingId}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      document.getElementById('distance').textContent =
+        `Distance this ride: ${data.distance_km} km`;
+      const mins = Math.floor(data.elapsed_minutes);
+      document.getElementById('elapsed').textContent =
+        `Time on ride: ${mins} min of ${data.paid_minutes} paid` + (data.overdue ? ' (overdue)' : '');
+    } catch (err) {
+      console.error('booking stats poll failed', err);
+    }
+  }
+
+  loadRoute();
+  pollLocation();
+  pollBookingStats();
+  setInterval(pollLocation, POLL_MS);
+  setInterval(pollBookingStats, POLL_MS);
+</script>
+{% endblock %}

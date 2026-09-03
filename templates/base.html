@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Cycle Quest{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <nav class="topnav">
+    <a href="{{ url_for('index') }}" class="brand">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Cycle Quest">
+      <span>Cycle Quest</span>
+    </a>
+    <ul class="nav-links">
+      {% if current_user %}
+        <li><a href="{{ url_for('home') }}">Rides</a></li>
+        <li><a href="{{ url_for('bookings') }}">My Bookings</a></li>
+        <li><a href="{{ url_for('dashboard') }}">My Stats</a></li>
+        <li><a href="{{ url_for('fleet_map') }}">Live Fleet Map</a></li>
+        <li><a href="{{ url_for('about') }}">About</a></li>
+        <li class="nav-user">Hi, {{ current_user.full_name.split(' ')[0] }}</li>
+        <li><a href="{{ url_for('logout') }}" class="nav-btn">Logout</a></li>
+      {% else %}
+        <li><a href="{{ url_for('about') }}">About</a></li>
+        <li><a href="{{ url_for('login') }}" class="nav-btn">Login</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-area">
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <p>Cycle Quest &mdash; a college project, rebuilt with a real backend, real bookings, and live tracking.</p>
+  </footer>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

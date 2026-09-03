@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Register — Cycle Quest{% endblock %}
+{% block content %}
+<div class="form-page wide">
+  <h1>Create your account</h1>
+  <form method="POST">
+    <div class="two-col">
+      <div class="field">
+        <label for="fullName">Full name</label>
+        <input type="text" id="fullName" name="fullName" value="{{ form.get('fullName','') }}" required>
+      </div>
+      <div class="field">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" value="{{ form.get('username','') }}" required>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" value="{{ form.get('email','') }}" required>
+      </div>
+      <div class="field">
+        <label for="phoneNumber">Phone number</label>
+        <input type="text" id="phoneNumber" name="phoneNumber" value="{{ form.get('phoneNumber','') }}" required>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+      <div class="field">
+        <label for="confirmPassword">Confirm password</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" required>
+      </div>
+    </div>
+    <p class="helper-text">Password needs to be at least 6 characters.</p>
+
+    <label style="font-weight:600;font-size:0.92rem;">Gender</label>
+    <div class="gender-row">
+      <label><input type="radio" name="gender" value="Male"> Male</label>
+      <label><input type="radio" name="gender" value="Female"> Female</label>
+      <label><input type="radio" name="gender" value="Other"> Other</label>
+      <label><input type="radio" name="gender" value="Prefer not to say" checked> Prefer not to say</label>
+    </div>
+
+    <button type="submit" class="btn btn-block">Register</button>
+  </form>
+  <p class="form-footnote">Already have an account? <a href="{{ url_for('login') }}">Log in</a></p>
+</div>
+{% endblock %}

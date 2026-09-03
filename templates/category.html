@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} — Cycle Quest{% endblock %}
+{% block content %}
+<div class="category-header">
+  <div>
+    <h1 style="margin-bottom:0;">{{ title }}</h1>
+    <a href="{{ url_for('home') }}" style="font-size:0.9rem;">&larr; Back to rides</a>
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+    <button type="button" id="nearMeBtn" class="btn secondary">Sort by distance from me</button>
+    <form class="sort-bar" method="get">
+      <select name="sort" onchange="this.form.submit()">
+        <option value="" {% if sort == '' %}selected{% endif %}>Sort by</option>
+        <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Price: low to high</option>
+        <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Price: high to low</option>
+        <option value="rating" {% if sort == 'rating' %}selected{% endif %}>Highest rated</option>
+      </select>
+    </form>
+  </div>
+</div>
+<p id="nearMeStatus" style="max-width:1100px;margin:0 auto;padding:0 32px;color:var(--ink-soft);font-size:0.88rem;"></p>
+
+<div class="cycle-grid" id="cycleGrid">
+  {% for cycle in cycles %}
+  {% set avail = cycle.available_units() %}
+  <div class="cycle-card" data-cycle-id="{{ cycle.id }}" data-lat="{{ cycle.base_lat }}" data-lng="{{ cycle.base_lng }}">
+    <div class="cycle-image">
+      <img src="{{ url_for('static', filename='images/' + cycle.image_file) }}" alt="{{ cycle.name }}">
+    </div>
+    <div class="cycle-body">
+      <h3>{{ cycle.name }}</h3>
+      <div class="cycle-price">Rs. {{ cycle.price_per_hour }}/hr</div>
+      <div class="cycle-rating">
+        {{ cycle.star_display() }} ({{ cycle.average_rating() }}/5{% if cycle.review_count() %} &middot; {{ cycle.review_count() }} rider review{{ 's' if cycle.review_count() != 1 else '' }}{% endif %})
+      </div>
+      <p class="cycle-desc">{{ cycle.description }}</p>
+      <p class="cycle-distance" style="display:none;font-size:0.85rem;color:var(--clay);font-weight:600;margin:0;"></p>
+      <div class="cycle-availability {{ 'low' if avail == 0 else 'ok' }}">
+        {% if avail == 0 %}All booked right now{% else %}{{ avail }} available{% endif %}
+      </div>
+      {% if avail > 0 %}
+      <form class="book-form" method="POST" action="{{ url_for('book_cycle', cycle_id=cycle.id) }}">
+        <select name="hours">
+          {% for h in range(1, 7) %}
+          <option value="{{ h }}">{{ h }} hr{{ 's' if h > 1 else '' }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit" class="btn">Book now</button>
+      </form>
+      {% else %}
+      <button class="btn btn-block" disabled>Fully booked</button>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function haversineKm(lat1, lng1, lat2, lng2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    const a = Math.sin(dLat / 2) ** 2 +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
+    return 2 * R * Math.asin(Math.sqrt(a));
+  }
+
+  document.getElementById('nearMeBtn').addEventListener('click', () => {
+    const status = document.getElementById('nearMeStatus');
+    if (!navigator.geolocation) {
+      status.textContent = "Your browser doesn't support location - can't sort by distance.";
+      return;
+    }
+    status.textContent = 'Getting your location…';
+    navigator.geolocation.getCurrentPosition((pos) => {
+      const { latitude, longitude } = pos.coords;
+      const grid = document.getElementById('cycleGrid');
+      const cards = Array.from(grid.querySelectorAll('.cycle-card'));
+
+      cards.forEach(card => {
+        const lat = parseFloat(card.dataset.lat);
+        const lng = parseFloat(card.dataset.lng);
+        const dist = haversineKm(latitude, longitude, lat, lng);
+        card.dataset.distance = dist.toFixed(2);
+        const el = card.querySelector('.cycle-distance');
+        el.textContent = `${dist.toFixed(1)} km from you`;
+        el.style.display = 'block';
+      });
+
+      cards.sort((a, b) => parseFloat(a.dataset.distance) - parseFloat(b.dataset.distance));
+      cards.forEach(card => grid.appendChild(card));
+
+      status.textContent = 'Sorted by distance from your current location.';
+    }, (err) => {
+      status.textContent = 'Could not get your location - check your browser permissions.';
+      console.error(err);
+    });
+  });
+</script>
+{% endblock %}

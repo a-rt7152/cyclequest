@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}My Bookings — Cycle Quest{% endblock %}
+{% block content %}
+<div class="bookings-wrap">
+  <h1>My bookings</h1>
+
+  {% if not bookings %}
+    <p>No bookings yet. <a href="{{ url_for('home') }}">Go find a ride.</a></p>
+  {% endif %}
+
+  {% for b in bookings %}
+  <div class="booking-row">
+    <img src="{{ url_for('static', filename='images/' + b.cycle.image_file) }}" alt="{{ b.cycle.name }}">
+    <div class="booking-info">
+      <h3 style="margin-bottom:4px;">{{ b.cycle.name }}</h3>
+      <span class="status-pill status-{{ b.status }}">{{ b.status.replace('_', ' ') }}</span>
+      <p style="margin:8px 0 0 0;color:var(--ink-soft);font-size:0.92rem;">
+        {{ b.hours }} hour{{ 's' if b.hours > 1 else '' }} &middot; Rs. {{ b.total_price }} &middot;
+        booked {{ b.created_at.strftime('%d %b %Y, %H:%M') }}
+        {% if b.status == 'completed' %}&middot; {{ b.distance_km }} km covered{% endif %}
+      </p>
+
+      {% if b.status == 'completed' and b.rider_rating is none %}
+      <form method="POST" action="{{ url_for('rate_booking', booking_id=b.id) }}" style="margin-top:10px;">
+        <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:4px;">Rate this ride</label>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+          <select name="stars" style="padding:6px;border-radius:6px;border:1px solid var(--border);">
+            <option value="5">★★★★★ (5)</option>
+            <option value="4">★★★★☆ (4)</option>
+            <option value="3">★★★☆☆ (3)</option>
+            <option value="2">★★☆☆☆ (2)</option>
+            <option value="1">★☆☆☆☆ (1)</option>
+          </select>
+          <input type="text" name="review" placeholder="Optional comment" maxlength="300"
+                 style="flex:1;min-width:140px;padding:7px 10px;border-radius:6px;border:1px solid var(--border);">
+          <button type="submit" class="btn">Submit</button>
+        </div>
+      </form>
+      {% elif b.status == 'completed' and b.rider_rating %}
+        <p style="margin-top:8px;font-size:0.88rem;color:var(--moss-dark);">
+          You rated this ride {{ b.rider_rating }}/5{% if b.rider_review %} — "{{ b.rider_review }}"{% endif %}
+        </p>
+      {% endif %}
+    </div>
+    <div class="booking-actions">
+      {% if b.status == 'active' %}
+        <a href="{{ url_for('track', cycle_id=b.cycle_id) }}" class="btn">Track live</a>
+        <form method="POST" action="{{ url_for('end_ride', booking_id=b.id) }}" onsubmit="return confirm('End this ride now?');">
+          <button type="submit" class="btn secondary">End ride</button>
+        </form>
+        <form method="POST" action="{{ url_for('cancel_booking', booking_id=b.id) }}" onsubmit="return confirm('Cancel this booking?');">
+          <button type="submit" class="btn danger">Cancel</button>
+        </form>
+      {% elif b.status == 'pending_payment' %}
+        <a href="{{ url_for('payment', booking_id=b.id) }}" class="btn">Complete payment</a>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

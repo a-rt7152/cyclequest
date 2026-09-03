@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Rides — Cycle Quest{% endblock %}
+{% block content %}
+{% if show_welcome %}
+<div class="flash-area"><div class="flash flash-success">Logged in successfully — welcome back!</div></div>
+{% endif %}
+
+<div class="section-heading">
+  <h1>Rides available</h1>
+  <p style="margin:0 auto;text-align:center;color:var(--ink-soft);">Pick a category to see the fleet and live availability.</p>
+</div>
+
+<div class="category-grid">
+  {% for c in categories %}
+  <div class="category-card {{ c.key }}">
+    <div class="cat-image"><img src="{{ url_for('static', filename='images/' + c.image) }}" alt="{{ c.title }}"></div>
+    <div class="cat-body">
+      <h3>{{ c.title }}</h3>
+      <p class="cat-available">{{ c.available }} cycle{{ 's' if c.available != 1 else '' }} available right now</p>
+      <a href="{{ url_for('category', cat_key=c.key) }}" class="btn btn-block">View cycles</a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

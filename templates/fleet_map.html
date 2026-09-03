@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Live Fleet Map — Cycle Quest{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+{% endblock %}
+{% block content %}
+<div class="track-wrap">
+  <h1>Live fleet map</h1>
+  <p><span class="live-dot"></span>{{ cycles|length }} cycle{{ 's' if cycles|length != 1 else '' }} currently out on a ride</p>
+  <div id="map"></div>
+  {% if not cycles %}
+    <p style="margin-top:16px;">No cycles are currently rented out. Book one to see it appear here.</p>
+  {% endif %}
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  const cycles = {{ cycles | map(attribute='id') | list | tojson }};
+  const names = {{ cycles | map(attribute='name') | list | tojson }};
+  const map = L.map('map').setView([13.0827, 80.2707], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors',
+    maxZoom: 18,
+  }).addTo(map);
+
+  const markers = {};
+  const bikeIcon = (heading) => L.divIcon({
+    className: 'bike-marker',
+    html: `<div style="transform: rotate(${heading}deg); font-size: 20px;">🚲</div>`,
+    iconSize: [24, 24],
+    iconAnchor: [12, 12],
+  });
+
+  async function poll() {
+    try {
+      const res = await fetch('/api/locations');
+      if (!res.ok) return;
+      const all = await res.json();
+
+      cycles.forEach((id, i) => {
+        const loc = all[id];
+        if (!loc) return;
+        const latlng = [loc.lat, loc.lng];
+        if (!markers[id]) {
+          markers[id] = L.marker(latlng, { icon: bikeIcon(loc.heading) }).addTo(map)
+            .bindPopup(`${names[i]}<br>${loc.speed_kmh} km/h`);
+        } else {
+          markers[id].setLatLng(latlng);
+          markers[id].setIcon(bikeIcon(loc.heading));
+        }
+      });
+    } catch (err) {
+      console.error('fleet poll failed', err);
+    }
+  }
+
+  if (cycles.length) {
+    poll();
+    setInterval(poll, 3000);
+  }
+</script>
+{% endblock %}
